@@ -1,0 +1,35 @@
+{% extends "graphs/layout.html" %}
+
+{% block body %}
+
+    <div class="container">
+        <br>
+        <h2>Login</h2>
+
+        {% if message %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <div>{{ message }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label for="username" class="form-label">Username:</label>
+                    <input autofocus class="form-control" type="text" name="username" id="username">
+                </div>
+                <div class="col-sm-6">
+                    <label for="password" class="form-label">Password:</label>
+                    <input class="form-control" type="password" name="password" id="password">
+                </div>
+                <div class="col-12 mb-2">
+                    <input class="btn btn-primary" type="submit" value="Login">
+                </div>
+            </div>
+        </form>
+        Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+    </div>
+    <br>
+{% endblock %}

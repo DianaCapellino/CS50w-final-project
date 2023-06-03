@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Stats</title>
+        <link href="../../static/graphs/css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../static/graphs/css/graphs.css" rel="stylesheet">
+    </head>
+    <body>
+        <div id="header">
+            <nav class="navbar navbar-expand-lg bg-light px-4">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">My Stats</a></li>
+                                <li><a class="dropdown-item" href="#">New Stats</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Log out</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        {% block body %}
+        {% endblock %}
+
+        <div class="container-fluid bg-light">
+            <footer class="d-flex flex-wrap justify-content-between align-items-center py-2 my-2">
+              <div class="col-md-4 d-flex align-items-center">
+                <span class="mb-3 mb-md-0 text-muted">&copy; 2023 Diana Laura</span>
+              </div>
+          
+              <ul class="nav col-md-4 justify-content-end list-unstyled d-flex align-items-center">
+                <li id="brand-name">Diana Laura</li>
+                <li class="ms-3"><a class="text-muted" target="_blank" href="https://www.instagram.com/diana.capellino/"><i class="fa-brands fa-instagram fa-lg" width="24" height="24"></i></a></li>
+                <li class="ms-3"><a class="text-muted" target="_blank" href="https://github.com/DianaCapellino/"><i class="fa-brands fa-github fa-lg" width="24" height="24"></i></a></li>
+                <li class="ms-3"><a class="text-muted" target="_blank" href="https://www.linkedin.com/in/diana-capellino-8865b4128/"><i class="fa-brands fa-linkedin fa-lg" width="24" height="24"></i></a></li>
+              </ul>
+            </footer>
+        </div>
+        <script src="../../static/graphs/js/bootstrap.bundle.min.js"></script>
+        <script src="../../static/graphs/js/jquery.min.js"></script>
+        <script src="../../static/graphs/js/app.js"></script>
+        <script src="https://kit.fontawesome.com/6f082d5aab.js" crossorigin="anonymous"></script>
+    </body>
+
+</html>

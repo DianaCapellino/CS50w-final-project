@@ -1,0 +1,30 @@
+{% extends "graphs/layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <div class="display-3 text-center">The complete list:</div>
+        <br>
+        <table>
+            <thead>
+                <tr>
+                    {% for label in labels %}
+                        <th>{{ label.label_name }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        {% for label in labels %}
+                            {% for value in values %}
+                                {% if value.label == label and value.row == row %}
+                                    <td>{{ value.value}}</td>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "graphs/layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <div id="message">
+            {% if message %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <div>{{ message }}</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+        </div>
+        <div id="home">
+            <h1 class="display-1 text-center">ALL YOUR <mark>STATS</mark><br>IN ONE PLACE</h1>
+            <br>
+            <div class="text-center my-2">Please upload your csv file:</div>
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="input-group">
+                    {{form}}
+                    <button class="btn btn-secondary" type="submit" id="input-file">Upload</button>
+                </div>
+            </form>
+            <br>
+        </div>
+        <div class="d-none" id="checking-data">
+            <div class="display-3 text-center">Loading data...</div>
+            <br>
+            <img class="img-responsive d-block" src="../../static/graphs/images/loading.gif" id="loading-img">
+        </div>
+    </div>
+{% endblock %}
