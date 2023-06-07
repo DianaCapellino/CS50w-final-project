@@ -1,4 +1,48 @@
+var columns = [];
+var table = [];
+const data_id = document.querySelector('.all-data').id;
+
+// Get all the data from json
+function get_all_data() {
+
+    // Get all the columns
+    fetch(`/data/${data_id}/json/labels`)
+    .then(response => response.json())
+    .then(list => {
+        list.forEach(label => {
+            columns.push([label.id, label.label_name]);
+        });
+        
+        // Get all the rows
+        fetch(`${data_id}/json/rows`)
+        .then(response => response.json())
+        .then(list => {
+
+            // Get the quantity of rows
+            var rows = list.length;
+            var row = [];
+
+            for (var row_nmb = 0; row_nmb < rows; row_nmb++) {
+
+                fetch(`${data_id}/json/${row_nmb +1}`)
+                .then(response => response.json())
+                .then(list => {
+                    list.forEach(item => {
+                        row.push(item.value);
+                    });
+                    table.push(row);
+                    row = [];
+                });
+            };
+        });
+    });
+};
+
+
 document.addEventListener('DOMContentLoaded', () => {
+
+    get_all_data();
+
     const input_file = document.getElementById('input-file');
     if (input_file != null) {
         input_file.addEventListener("click", upload_file);
@@ -28,10 +72,10 @@ function q_quotes_by_sales() {
     const data_id = document.querySelector('.all-data').id;
     console.log(`Inside quantity of quotes by sales. Data id: ${data_id}`);
 
-    var sales_staff = []
-    var q_quotes = []
-    var label_name_id = ""
-    var label_status_id = ""
+    var sales_staff = [];
+    var q_quotes = [];
+    var label_name_id = "";
+    var label_status_id = "";
     
     // Get the label id 
     fetch(`/data/${data_id}/json/labels`)
@@ -82,7 +126,7 @@ function q_quotes_by_sales() {
             };
         });
 
-        console.log(q_quotes);
+        //console.log(q_quotes);
 
     });
 }
