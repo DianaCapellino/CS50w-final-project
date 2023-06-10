@@ -1,5 +1,8 @@
 var columns = [];
 var table = [];
+var values = [];
+
+// Get the data id
 const data_id = document.querySelector('.all-data').id;
 
 // Get all the data from json
@@ -22,18 +25,26 @@ function get_all_data() {
             var rows = list.length;
             var row = [];
 
-            for (var row_nmb = 0; row_nmb < rows; row_nmb++) {
+            // Bring all the values to prepare table
+            fetch(`${data_id}/json/values`)
+            .then(response => response.json())
+            .then(list => {
+                list.forEach(item => {
+                    values.push(item.value);
+                });
 
-                fetch(`${data_id}/json/${row_nmb +1}`)
-                .then(response => response.json())
-                .then(list => {
-                    list.forEach(item => {
-                        row.push(item.value);
-                    });
+                // Build the table with all values
+                var value_nmb = 0;
+
+                for (var row_nmb = 1; row_nmb < (rows+1); row_nmb++) {
+                    for (var col = 0; col < columns.length; col++) {
+                        row.push(values[col+value_nmb]);
+                    };
                     table.push(row);
                     row = [];
-                });
-            };
+                    value_nmb = value_nmb + columns.length;
+                };
+            });
         });
     });
 };
@@ -62,75 +73,96 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
 function upload_file () {
     document.getElementById('home').className='d-none';
     document.getElementById('checking-data').className='d-block';
     
 }
 
-function q_quotes_by_sales() {
-    const data_id = document.querySelector('.all-data').id;
-    console.log(`Inside quantity of quotes by sales. Data id: ${data_id}`);
 
+function q_quotes_by_sales() {
+    document.getElementById('q-quotes-by-sales').disabled = true;
+
+    // Prepare the empty tables for the data
     var sales_staff = [];
     var q_quotes = [];
-    var label_name_id = "";
-    var label_status_id = "";
     
-    // Get the label id 
-    fetch(`/data/${data_id}/json/labels`)
-    .then(response => response.json())
-    .then(list => {
-        list.forEach(label => {
-            if (label.label_name === "Trab.") {
-                label_name_id = label.id
-            };
-            if (label.label_name === "Status") {
-                label_status_id = label.id
-            };
-        });
-    });
-
-    // Get the values to work on the data
-    fetch(`/data/${data_id}/json/values`)
-    .then(response => response.json())
-    .then(list => {
-        list.forEach(item => {
+    // Fill the first information in the row
+    for (var row = 0; row < table.length; row++) {
+        for (var col = 0; col < columns.length; col++) {
 
             // Get the list of the staff
-            if (item.label_id === label_name_id) {
-                if (sales_staff.indexOf(item.value) === -1) {
-                    sales_staff.push(item.value);
+            if (col === 10) {
+                if (sales_staff.indexOf(table[row][col]) === -1) {
+                    sales_staff.push(table[row][col]);
                 };
             };
-        });
-        console.log(sales_staff);
+        };
+    };
 
-        // Get information from each row
-        fetch(`${data_id}/json/rows`)
-        .then(response => response.json())
-        .then(list => {
-
-            // Get the quantity of rows
-            const q_rows = list.length;
-
-            // Check every value in the row
-            for (var row_nmb = 1; row_nmb <= q_rows; row_nmb++) {
-                fetch(`${data_id}/json/${row_nmb}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(item => {
-
-                    });
-                });
-            };
-        });
-
-        //console.log(q_quotes);
-
+    // Create an array for each item
+    sales_staff.forEach(person => {
+        q_quotes.push([person, 0]);
     });
+
+    // Fill the second information in the row
+    for (var row = 0; row < table.length; row++) {
+        for (var col = 0; col < columns.length; col++) {
+
+            if (col === 11) {
+                for (var person = 0; person < sales_staff.length; person++) {
+                    if (sales_staff[person] === table[row][10] && table[row][col] === "COTA FIT") {
+                        q_quotes.forEach(item => {
+                            if (sales_staff[person] === item[0]) {
+                                item[1] = item[1] + 1;
+                            };
+                        });
+                    };
+                };
+            };
+        };
+    };
+
+    // get the table object in the doucment
+    const table_obj = document.getElementById('data-table');
+
+    // Create the table inside the view
+    q_quotes.forEach(person => {
+        const row_item = document.createElement('tr');
+        table_obj.append(row_item);
+        person.forEach(item => {
+            const data = document.createElement('th');
+            data.innerHTML = `<th>${item}</th>`;
+            row_item.append(data);
+        });
+    });
+    document.getElementById('chart-view').className = 'd-block container';
+
+    const ctx = document.getElementById('chart');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [`${q_quotes[0][0]}`, `${q_quotes[1][0]}`, `${q_quotes[2][0]}`],
+          datasets: [{
+            label: '# of Quotes',
+            data: [`${q_quotes[0][1]}`, `${q_quotes[1][1]}`, `${q_quotes[2][1]}`],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
 }
 
+
 function all_data(data_id) {
-    location.href = `/data/${data_id}/all`;
+    //location.href = `/data/${data_id}/all`;
+
 }

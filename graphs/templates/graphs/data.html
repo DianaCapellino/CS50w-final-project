@@ -4,12 +4,13 @@
     <div class="container">
         <div class="display-3 text-center">Stats options - {{ data.name }}</div>
         <button class="btn btn-secondary my-3 all-data" id="{{ data.id }}">All data</button></a>
-        <button class="btn btn-secondary my-3 button" id="q-quotes-by-sales">Quantity of quotes per sales team</button>
+        <button class="btn btn-secondary my-3 button" id="q-quotes-by-sales">Quantity of quotes and bookings</button>
         <div id="data-view" class="d-none">
             
         </div>
         <div id="chart-view" class="d-none">
             <table id="data-table"></table>
+            <canvas id="chart"></canvas>
         </div>
     </div>
 
