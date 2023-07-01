@@ -5,6 +5,7 @@ var values = [];
 // Get the data id
 const data_id = document.querySelector('.all-data').id;
 
+
 // Get all the data from json
 function get_all_data() {
 
@@ -103,7 +104,7 @@ function q_quotes_by_sales() {
 
     // Create an array for each item
     sales_staff.forEach(person => {
-        q_quotes.push([person, 0]);
+        q_quotes.push([person, 0, 0, 0]);
     });
 
     // Fill the second information in the row
@@ -116,6 +117,28 @@ function q_quotes_by_sales() {
                         q_quotes.forEach(item => {
                             if (sales_staff[person] === item[0]) {
                                 item[1] = item[1] + 1;
+                                item[2] = item[2] + 1;
+                            };
+                        });
+                    };
+                    if (sales_staff[person] === table[row][10] && table[row][col] === "COTB FIT") {
+                        q_quotes.forEach(item => {
+                            if (sales_staff[person] === item[0]) {
+                                item[2] = item[2] + 1;
+                            };
+                        });
+                    };
+                    if (sales_staff[person] === table[row][10] && table[row][col] === "COTC FIT") {
+                        q_quotes.forEach(item => {
+                            if (sales_staff[person] === item[0]) {
+                                item[2] = item[2] + 1;
+                            };
+                        });
+                    };
+                    if (sales_staff[person] === table[row][10] && table[row][col] === "BOOKING1 FIT") {
+                        q_quotes.forEach(item => {
+                            if (sales_staff[person] === item[0]) {
+                                item[3] = item[3] + 1;
                             };
                         });
                     };
@@ -124,45 +147,215 @@ function q_quotes_by_sales() {
         };
     };
 
-    // get the table object in the doucment
+    const table_labels = ["Vendedor", "COTA FIT", "COTB FIT", "BOOKING1 FIT"];
+    const chart_labels = ["COTA FIT", "COTB FIT", "BOOKING1 FIT"];
+
+    build_table(table_labels, q_quotes);
+    build_chart(chart_labels, q_quotes, 'bar', sales_staff);
+
+}
+
+
+function build_table(labels, data) {
+
+    // Get the table object in the document
     const table_obj = document.getElementById('data-table');
 
+    // Create the table head   
+    const thead = document.createElement('thead');
+    const trow = document.createElement('tr');
+    thead.append(trow);
+
+    for (var i=0; i<labels.length; i++) {
+        const th = document.createElement('th');
+        th.innerHTML = labels[i];
+        trow.append(th);
+    }
+
+    table_obj.append(thead);
+
+    // Create the empty table body
+    const tbody = document.createElement('tbody');
+    table_obj.append(tbody);
+
     // Create the table inside the view
-    q_quotes.forEach(person => {
+    data.forEach(person => {
         const row_item = document.createElement('tr');
-        table_obj.append(row_item);
+        tbody.append(row_item);
         person.forEach(item => {
-            const data = document.createElement('th');
-            data.innerHTML = `<th>${item}</th>`;
+            const data = document.createElement('td');
+            data.innerHTML = `${item}`;
             row_item.append(data);
         });
     });
-    document.getElementById('chart-view').className = 'd-block container';
+}
 
+
+function build_chart(labels, data, type, second_labels) {
+
+    // Get the element where the chart is located
     const ctx = document.getElementById('chart');
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: [`${q_quotes[0][0]}`, `${q_quotes[1][0]}`, `${q_quotes[2][0]}`],
-          datasets: [{
-            label: '# of Quotes',
-            data: [`${q_quotes[0][1]}`, `${q_quotes[1][1]}`, `${q_quotes[2][1]}`],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
+    // Build the chart according to the number of datasets and type informed
+    if (labels.length === 1) {
+        new Chart(ctx, {
+            type: `${type}`,
+            data: {
+            labels: second_labels.map(row => row),
+            datasets: [
+                {
+                    label: labels[0],
+                    data: data.map(row => row[1]),
+                    borderWidth: 1
+                }
+            ]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
             }
-          }
-        }
-      });
+            }
+        });
+    } else if (labels.length === 2) {
+        new Chart(ctx, {
+            type: `${type}`,
+            data: {
+            labels: second_labels.map(row => row),
+            datasets: [
+                {
+                    label: labels[0],
+                    data: data.map(row => row[1]),
+                    borderWidth: 1
+                },
+                {
+                    label: labels[1],
+                    data: data.map(row => row[2]),
+                    borderWidth: 1
+                }
+            ]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+    } else if (labels.length === 3) {
+        new Chart(ctx, {
+            type: `${type}`,
+            data: {
+            labels: second_labels.map(row => row),
+            datasets: [
+                {
+                    label: labels[0],
+                    data: data.map(row => row[1]),
+                    borderWidth: 1
+                },
+                {
+                    label: labels[1],
+                    data: data.map(row => row[2]),
+                    borderWidth: 1
+                },
+                {
+                    label: labels[2],
+                    data: data.map(row => row[3]),
+                    borderWidth: 1
+                }
+            ]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+    } else if (labels.length === 4) {
+        new Chart(ctx, {
+            type: `${type}`,
+            data: {
+            labels: second_labels.map(row => row),
+            datasets: [
+                {
+                    label: labels[0],
+                    data: data.map(row => row[1]),
+                    borderWidth: 1
+                },
+                {
+                    label: labels[1],
+                    data: data.map(row => row[2]),
+                    borderWidth: 1
+                },
+                {
+                    label: labels[2],
+                    data: data.map(row => row[3]),
+                    borderWidth: 1
+                },
+                {
+                    label: labels[3],
+                    data: data.map(row => row[4]),
+                    borderWidth: 1
+                }
+            ]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+    } else if (labels.length === 5) {
+        new Chart(ctx, {
+            type: `${type}`,
+            data: {
+            labels: second_labels.map(row => row),
+            datasets: [
+                {
+                    label: labels[0],
+                    data: data.map(row => row[1]),
+                    borderWidth: 1
+                },
+                {
+                    label: labels[1],
+                    data: data.map(row => row[2]),
+                    borderWidth: 1
+                },
+                {
+                    label: labels[2],
+                    data: data.map(row => row[3]),
+                    borderWidth: 1
+                },
+                {
+                    label: labels[3],
+                    data: data.map(row => row[4]),
+                    borderWidth: 1
+                },
+                {
+                    label: labels[4],
+                    data: data.map(row => row[5]),
+                    borderWidth: 1
+                }
+            ]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+    }
 }
 
 
 function all_data(data_id) {
-    //location.href = `/data/${data_id}/all`;
-
+    location.href = `/data/${data_id}/all`;
 }

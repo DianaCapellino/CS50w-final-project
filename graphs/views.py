@@ -92,25 +92,36 @@ def register(request):
         return render(request, "graphs/register.html")
     
 
+# Take the information from csv
+@login_required
 def upload_data(csv_obj, user):
 
+    # Create the data object
     chart_data = ChartData.objects.create(
         name=csv_obj.file_name,
         csv= csv_obj,
         user=user
     )
     
+    # Open the csv and read all the data
     with open(csv_obj.file_name.path, "r") as f:
         reader = csv.reader(f)
 
+        # Create empty list of labels and rows
         labels = []
         rows = []
+
+        # Start at row number 1
         row_number = 1
 
         for i, row in enumerate(reader):
+
+            # The first row is the name of the table
             if i == 0:
                 chart_data.name = row[0]
                 chart_data.save()
+
+            # The second row takes the name of the labels
             elif i == 1:
                 for col in row:
                     label = Label.objects.create(
@@ -118,6 +129,8 @@ def upload_data(csv_obj, user):
                         chart_data=chart_data
                     )
                     labels.append(label)
+            
+            # The rest of the rows is data
             else:
                 new_row = Row.objects.create(
                     row_number=row_number,
@@ -136,6 +149,7 @@ def upload_data(csv_obj, user):
                     col_number = col_number + 1
                 row_number = row_number + 1
     
+    # Modifies the csv to activated
     csv_obj.activated = True
     csv_obj.save()
 
@@ -143,15 +157,9 @@ def upload_data(csv_obj, user):
 def display_data(request, data_id):
 
     chart_data = ChartData.objects.get(pk=data_id)
-    values = Data.objects.filter(chart_data=chart_data)
-    labels = Label.objects.filter(chart_data=chart_data)
-    rows = Row.objects.filter(chart_data=chart_data)
 
     return render(request, "graphs/data.html", {
-        "data": chart_data,
-        "values": values,
-        "labels": labels,
-        "rows": rows
+        "data": chart_data
     })
 
 
